@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#145c43" />
+    <meta name="description" content="A simple voice-assisted naira calculator with saved lists, payments, checklists, and balances." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="ListCalc" />
+    <title>ListCalc — Voice List Calculator</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell" id="appShell">
+      <aside class="drawer" id="drawer" aria-label="App menu" aria-hidden="true" inert>
+        <div class="brand-row">
+          <div class="brand-mark" aria-hidden="true">₦</div>
+          <div>
+            <p class="brand-name">ListCalc</p>
+            <p class="brand-note">Voice list calculator</p>
+          </div>
+          <button class="icon-button drawer-close" id="closeDrawerButton" type="button" aria-label="Close menu">×</button>
+        </div>
+
+        <nav class="drawer-nav" aria-label="Main navigation">
+          <button class="nav-row" id="calculatorNavButton" type="button">
+            <span class="nav-symbol" aria-hidden="true">=</span>
+            <span>Calculator</span>
+          </button>
+
+          <div class="library-nav-heading">
+            <span>Your libraries</span>
+            <span class="library-count" id="libraryCount">0</span>
+          </div>
+          <div class="library-nav-list" id="libraryNavList"></div>
+
+          <button class="new-library-button" id="newLibraryButton" type="button">
+            <span aria-hidden="true">＋</span>
+            <span>New library</span>
+          </button>
+        </nav>
+
+        <div class="drawer-footer">
+          <button class="install-button" id="installButton" type="button" hidden>Install ListCalc</button>
+          <p><span aria-hidden="true">●</span> Saved on this device</p>
+        </div>
+      </aside>
+
+      <button class="drawer-overlay" id="drawerOverlay" type="button" aria-label="Close menu" tabindex="-1"></button>
+
+      <div class="app-content">
+        <header class="topbar">
+          <button class="icon-button menu-button" id="openDrawerButton" type="button" aria-label="Open libraries">
+            <span aria-hidden="true">☰</span>
+          </button>
+          <div class="topbar-title-wrap">
+            <p class="eyebrow" id="screenEyebrow">QUICK CALCULATOR</p>
+            <h1 id="screenTitle">Calculator</h1>
+          </div>
+          <div class="library-actions-wrap" id="libraryActionsWrap" hidden>
+            <button class="icon-button" id="libraryMoreButton" type="button" aria-label="Library options" aria-expanded="false">•••</button>
+            <div class="action-menu" id="libraryActionMenu" role="menu" hidden>
+              <button id="renameLibraryButton" type="button" role="menuitem">Rename library</button>
+              <button class="danger-text" id="deleteLibraryButton" type="button" role="menuitem">Delete library</button>
+            </div>
+          </div>
+          <span class="topbar-spacer" id="topbarSpacer" aria-hidden="true"></span>
+        </header>
+
+        <main class="main-content" id="mainContent">
+          <section class="calculator-view" id="calculatorView" aria-labelledby="screenTitle">
+            <div class="calculator-card">
+              <div class="calculator-display" aria-live="polite" aria-atomic="true">
+                <p id="calculatorExpression" class="calculator-expression">&nbsp;</p>
+                <output id="calculatorOutput" class="calculator-output" aria-label="Calculator result">₦0</output>
+              </div>
+              <div class="keypad" id="calculatorKeypad" aria-label="Calculator keypad">
+                <button class="key key-utility" type="button" data-calc-type="clear">AC</button>
+                <button class="key key-utility" type="button" data-calc-type="toggle-sign">±</button>
+                <button class="key key-utility" type="button" data-calc-type="percent">%</button>
+                <button class="key key-operation" type="button" data-calc-type="operator" data-calc-value="÷">÷</button>
+                <button class="key" type="button" data-calc-type="digit" data-calc-value="7">7</button>
+                <button class="key" type="button" data-calc-type="digit" data-calc-value="8">8</button>
+                <button class="key" type="button" data-calc-type="digit" data-calc-value="9">9</button>
+                <button class="key key-operation" type="button" data-calc-type="operator" data-calc-value="×">×</button>
+                <button class="key" type="button" data-calc-type="digit" data-calc-value="4">4</button>
+                <button class="key" type="button" data-calc-type="digit" data-calc-value="5">5</button>
+                <button class="key" type="button" data-calc-type="digit" data-calc-value="6">6</button>
+                <button class="key key-operation" type="button" data-calc-type="operator" data-calc-value="−">−</button>
+                <button class="key" type="button" data-calc-type="digit" data-calc-value="1">1</button>
+                <button class="key" type="button" data-calc-type="digit" data-calc-value="2">2</button>
+                <button class="key" type="button" data-calc-type="digit" data-calc-value="3">3</button>
+                <button class="key key-operation" type="button" data-calc-type="operator" data-calc-value="+">+</button>
+                <button class="key key-backspace" type="button" data-calc-type="backspace" aria-label="Backspace">⌫</button>
+                <button class="key" type="button" data-calc-type="digit" data-calc-value="0">0</button>
+                <button class="key" type="button" data-calc-type="decimal">.</button>
+                <button class="key key-equals" type="button" data-calc-type="equals">=</button>
+              </div>
+            </div>
+            <p class="keyboard-hint">You can also use your keyboard.</p>
+          </section>
+
+          <section class="library-view" id="libraryView" aria-labelledby="screenTitle" hidden>
+            <div class="total-card">
+              <div class="total-card-topline">
+                <span>Remaining</span>
+                <span id="libraryProgress">0 of 0 paid</span>
+              </div>
+              <output id="libraryTotal" class="library-total" aria-live="polite">₦0</output>
+              <div class="total-breakdown" aria-label="Library balance summary">
+                <span>Planned <strong id="libraryPlannedTotal">₦0</strong></span>
+                <span>Paid <strong id="libraryPaidTotal">₦0</strong></span>
+              </div>
+              <p id="librarySummary">0 items</p>
+            </div>
+
+            <section class="entry-card" aria-labelledby="addItemHeading">
+              <div class="section-heading-row">
+                <div>
+                  <p class="section-kicker">QUICK ENTRY</p>
+                  <h2 id="addItemHeading">Add an item</h2>
+                </div>
+                <span class="autosave-note">Auto-saves</span>
+              </div>
+              <form id="addItemForm" novalidate>
+                <div class="field-group description-group">
+                  <label for="itemDescription">What is this for?</label>
+                  <div class="description-input-row">
+                    <input id="itemDescription" name="description" type="text" maxlength="120" autocomplete="off" placeholder="e.g. Netflix" required />
+                    <button class="speak-button" id="speakButton" type="button" aria-label="Start voice description">
+                      <span aria-hidden="true">🎙</span>
+                      <span id="speakButtonText">Speak</span>
+                    </button>
+                  </div>
+                  <p class="field-help" id="voiceStatus" aria-live="polite">Say the item name, then type the amount.</p>
+                  <p class="field-error" id="descriptionError" role="alert"></p>
+                </div>
+                <div class="amount-add-row">
+                  <div class="field-group amount-group">
+                    <label for="itemAmount">Amount</label>
+                    <div class="currency-input">
+                      <span aria-hidden="true">₦</span>
+                      <input id="itemAmount" name="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="5,000" required />
+                    </div>
+                    <p class="field-error" id="amountError" role="alert"></p>
+                  </div>
+                  <button class="primary-button add-button" id="addItemButton" type="submit">Add item</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="items-section" aria-labelledby="itemsHeading">
+              <div class="section-heading-row items-heading-row">
+                <h2 id="itemsHeading">Items</h2>
+                <span id="itemCountLabel">0 items</span>
+              </div>
+              <div class="empty-state" id="itemsEmptyState" hidden>
+                <div class="empty-symbol" aria-hidden="true">＋</div>
+                <h3>Nothing here yet</h3>
+                <p>Say or type your first item, then enter the amount.</p>
+              </div>
+              <ul class="item-list" id="itemList"></ul>
+            </section>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <dialog class="dialog" id="newLibraryDialog">
+      <form id="newLibraryForm" novalidate>
+        <div class="dialog-heading">
+          <p class="section-kicker">YOUR LIBRARY</p>
+          <h2>Create a new library</h2>
+          <p>Give this calculation list a clear name.</p>
+        </div>
+        <div class="field-group">
+          <label for="newLibraryName">Library name</label>
+          <input id="newLibraryName" type="text" maxlength="50" placeholder="e.g. Debts Calculation" autocomplete="off" required />
+          <p class="field-error" id="newLibraryError" role="alert"></p>
+        </div>
+        <div class="dialog-actions">
+          <button class="secondary-button" type="button" data-close-dialog="newLibraryDialog">Cancel</button>
+          <button class="primary-button" type="submit">Create library</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="dialog" id="renameLibraryDialog">
+      <form id="renameLibraryForm" novalidate>
+        <div class="dialog-heading">
+          <p class="section-kicker">LIBRARY</p>
+          <h2>Rename library</h2>
+        </div>
+        <div class="field-group">
+          <label for="renameLibraryName">Library name</label>
+          <input id="renameLibraryName" type="text" maxlength="50" autocomplete="off" required />
+          <p class="field-error" id="renameLibraryError" role="alert"></p>
+        </div>
+        <div class="dialog-actions">
+          <button class="secondary-button" type="button" data-close-dialog="renameLibraryDialog">Cancel</button>
+          <button class="primary-button" type="submit">Save name</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="dialog" id="editItemDialog">
+      <form id="editItemForm" novalidate>
+        <div class="dialog-heading">
+          <p class="section-kicker">ITEM</p>
+          <h2>Edit item</h2>
+          <p>Change the total amount or record a payment.</p>
+        </div>
+        <div class="balance-summary" aria-label="Current item balance">
+          <span>Original <strong id="editOriginalAmount">₦0</strong></span>
+          <span>Paid <strong id="editPaidAmount">₦0</strong></span>
+          <span>Remaining <strong id="editRemainingAmount">₦0</strong></span>
+        </div>
+        <div class="field-group">
+          <label for="editItemDescription">Description</label>
+          <input id="editItemDescription" type="text" maxlength="120" autocomplete="off" required />
+          <p class="field-error" id="editDescriptionError" role="alert"></p>
+        </div>
+        <div class="field-group">
+          <label for="editItemAmount">Total amount</label>
+          <div class="currency-input">
+            <span aria-hidden="true">₦</span>
+            <input id="editItemAmount" type="text" inputmode="decimal" autocomplete="off" required />
+          </div>
+          <p class="field-error" id="editAmountError" role="alert"></p>
+        </div>
+        <div class="field-group">
+          <label for="editPaymentAmount">Record a payment <span class="optional-label">Optional</span></label>
+          <div class="currency-input">
+            <span aria-hidden="true">₦</span>
+            <input id="editPaymentAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 1,000,000" />
+          </div>
+          <p class="field-help">This payment will be subtracted from the remaining balance.</p>
+          <p class="field-error" id="editPaymentError" role="alert"></p>
+        </div>
+        <div class="projected-balance" aria-live="polite">
+          Balance after saving: <strong id="editProjectedBalance">₦0</strong>
+        </div>
+        <div class="dialog-actions">
+          <button class="secondary-button" type="button" data-close-dialog="editItemDialog">Cancel</button>
+          <button class="primary-button" type="submit">Save changes</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="dialog history-dialog" id="itemHistoryDialog" aria-labelledby="itemHistoryHeading">
+      <div class="dialog-content">
+        <div class="dialog-heading">
+          <p class="section-kicker">ITEM HISTORY</p>
+          <h2 id="itemHistoryHeading" tabindex="-1">Item history</h2>
+          <p id="itemHistoryDescription"></p>
+        </div>
+        <div class="balance-summary history-balance-summary" aria-label="Current item balance">
+          <span>Original <strong id="historyOriginalAmount">₦0</strong></span>
+          <span>Paid <strong id="historyPaidAmount">₦0</strong></span>
+          <span>Remaining <strong id="historyRemainingAmount">₦0</strong></span>
+        </div>
+        <ol class="history-list" id="itemHistoryList"></ol>
+        <div class="dialog-actions">
+          <button class="primary-button" id="closeItemHistoryButton" type="button">Close</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="dialog danger-dialog" id="deleteLibraryDialog">
+      <form id="deleteLibraryForm">
+        <div class="dialog-heading">
+          <p class="section-kicker danger-text">PLEASE CONFIRM</p>
+          <h2>Delete this library?</h2>
+          <p id="deleteLibraryMessage"></p>
+        </div>
+        <div class="dialog-actions">
+          <button class="secondary-button" type="button" data-close-dialog="deleteLibraryDialog">Cancel</button>
+          <button class="danger-button" type="submit">Delete library</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+      <span id="toastMessage"></span>
+      <button id="toastAction" type="button" hidden>Undo</button>
+    </div>
+
+    <script src="./core.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

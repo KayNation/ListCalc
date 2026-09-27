@@ -1,0 +1,13 @@
+{
+  "name": "listcalc",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Offline-friendly naira calculator and payment tracker",
+  "scripts": {
+    "test": "node --test tests/core.test.cjs",
+    "test:browser": "node tests/browser-smoke.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
