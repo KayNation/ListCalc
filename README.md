@@ -4,6 +4,8 @@
 
 ListCalc combines quick arithmetic with named lists for bills, purchases, and amounts owed. It keeps money in integer kobo, so totals and partial payments do not drift because of floating-point rounding. The interface works on phones and desktops, and the browser can install it as a Progressive Web App.
 
+**[Try the live app](https://kaynation.github.io/ListCalc/)** — opens with an empty library on your device. No sign-in is needed.
+
 ![ListCalc library view with sample data](screenshots/listcalc-library.png)
 
 ## Try it locally
